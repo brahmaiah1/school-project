@@ -1,6 +1,7 @@
 package com.school.controller;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -10,11 +11,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.school.pojo.Contact;
+import com.school.service.ContactService;
 
 import jakarta.validation.Valid;
 
 @Controller
 public class ContactController {
+	
+	@Autowired
+	ContactService contactService;
 	
 	@RequestMapping(value="/contact",method = RequestMethod.GET)
 	public String getStudentDetails(Model model) {
@@ -43,16 +48,13 @@ public class ContactController {
 	 */
 	
 	@RequestMapping(value = "/saveContact", method = RequestMethod.POST)
-	public String saveContactDetails(@Valid @ModelAttribute("contact")Contact contact,Errors error) {
-		if(error.hasErrors()) {
-			System.out.println("error"+error.toString());
+	public String saveContactDetails(@Valid @ModelAttribute("contact")Contact contact,Errors errors) {
+		if(errors.hasErrors()) {
+			System.out.println("error"+errors.toString());
 			return "redirect:/contact";
 		}
-	
-		System.out.println("mnumber="+contact.getMobileNum());
-		System.out.println("email="+contact.getEmail());
-		System.out.println("subject="+contact.getSubject());
-		System.out.println("message="+contact.getMessage());
+		contactService.saveContactDetails(contact);
+		
 		return "redirect:/contact";
 	}
 	 
